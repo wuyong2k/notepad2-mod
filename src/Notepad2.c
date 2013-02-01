@@ -3435,6 +3435,7 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
           EndWaitCursor();
           break;
         case SCLEX_LATEX:
+        case SCLEX_MATLAB:
           BeginWaitCursor();
           EditToggleLineComments(hwndEdit,L"%",TRUE);
           EndWaitCursor();
@@ -3482,6 +3483,9 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
           break;
         case SCLEX_LUA:
           EditEncloseSelection(hwndEdit,L"--[[",L"]]");
+          break;
+        case SCLEX_MATLAB:
+          EditEncloseSelection(hwndEdit,L"%{",L"%}");
       }
       break;
 
@@ -6242,7 +6246,7 @@ void ParseCommandLine()
             LocalFree(lpSchemeArg);
             lpSchemeArg = NULL;
           }
-          iInitialLexer = 33;
+          iInitialLexer = 34;
           flagLexerSpecified = 1;
           break;
 
@@ -6251,7 +6255,7 @@ void ParseCommandLine()
             LocalFree(lpSchemeArg);
             lpSchemeArg = NULL;
           }
-          iInitialLexer = 34;
+          iInitialLexer = 35;
           flagLexerSpecified = 1;
           break;
 
