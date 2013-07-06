@@ -2389,6 +2389,39 @@ EDITLEXER lexYAML = { SCLEX_YAML, 63355, L"YAML", L"yaml; yml", L"", &KeyWords_Y
                       { SCE_YAML_OPERATOR, 63132, L"Operator", L"fore:#333366", L"" },
                       { -1, 00000, L"", L"", L"" } } };
 
+
+KEYWORDLIST KeyWords_COFFEESCRIPT = {
+"", "", "", "", "", "", "", "", "" };
+
+
+EDITLEXER lexCOFFEESCRIPT = { SCLEX_COFFEESCRIPT, 63362, L"Coffeescript", L"coffee", L"", &KeyWords_COFFEESCRIPT, {
+                       { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
+                       //{ SCE_COFFEESCRIPT_DEFAULT, L"Default", L"", L"" },
+                       { MULTI_STYLE(SCE_COFFEESCRIPT_COMMENT,SCE_COFFEESCRIPT_COMMENTLINE,SCE_COFFEESCRIPT_COMMENTDOC,SCE_COFFEESCRIPT_COMMENTBLOCK), 63127, L"Comment", L"fore:#008000", L"" },
+                       { MULTI_STYLE(SCE_CMAKE_STRINGDQ,SCE_CMAKE_STRINGLQ,SCE_CMAKE_STRINGRQ,0), 63131, L"String", L"back:#EEEEEE; fore:#7F007F", L"" },
+                       { SCE_COFFEESCRIPT_PREPROCESSOR, 63133, L"Preprocessor", L"fore:#FF8000", L"" },
+                       { SCE_COFFEESCRIPT_IDENTIFIER, 63129, L"Identifier", L"bold; fore:#0A246A", L"" },
+                       { SCE_COFFEESCRIPT_OPERATOR, 63132, L"Operator", L"fore:#B000B0", L"" },
+                       { SCE_COFFEESCRIPT_NUMBER, 63130, L"Number", L"fore:#008080", L"" },
+                       { -1, 00000, L"", L"", L"" } } };
+
+//#define SCE_COFFEESCRIPT_WORD 5
+//#define SCE_COFFEESCRIPT_STRING 6
+//#define SCE_COFFEESCRIPT_CHARACTER 7
+//#define SCE_COFFEESCRIPT_STRINGEOL 12
+//#define SCE_COFFEESCRIPT_VERBATIM 13
+//#define SCE_COFFEESCRIPT_REGEX 14
+//#define SCE_COFFEESCRIPT_COMMENTLINEDOC 15
+//#define SCE_COFFEESCRIPT_WORD2 16
+//#define SCE_COFFEESCRIPT_COMMENTDOCKEYWORD 17
+//#define SCE_COFFEESCRIPT_COMMENTDOCKEYWORDERROR 18
+//#define SCE_COFFEESCRIPT_GLOBALCLASS 19
+//#define SCE_COFFEESCRIPT_STRINGRAW 20
+//#define SCE_COFFEESCRIPT_TRIPLEVERBATIM 21
+//#define SCE_COFFEESCRIPT_HASHQUOTEDSTRING 22
+//#define SCE_COFFEESCRIPT_VERBOSE_REGEX 23
+//#define SCE_COFFEESCRIPT_VERBOSE_REGEX_COMMENT 24
+
 // This array holds all the lexers...
 // Don't forget to change the number of the lexer for HTML and XML
 // in Notepad2.c ParseCommandLine() if you change this array!
@@ -2397,6 +2430,7 @@ PEDITLEXER pLexArray[NUMLEXERS] =
   &lexDefault,
   &lexANSI,
   &lexAVS,
+  &lexCOFFEESCRIPT,
   &lexCONF, //Apache Config Scripts
   &lexASM,
   &lexAHK,
