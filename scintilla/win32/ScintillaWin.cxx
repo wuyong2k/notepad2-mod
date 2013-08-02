@@ -5,7 +5,6 @@
 // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
-#include <new>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -13,6 +12,7 @@
 #include <assert.h>
 #include <limits.h>
 
+#include <new>
 #include <string>
 #include <vector>
 #include <map>
@@ -197,6 +197,7 @@ class ScintillaWin :
 	bool hasOKText;
 
 	CLIPFORMAT cfColumnSelect;
+	CLIPFORMAT cfColumnSelectBorland;
 	CLIPFORMAT cfLineSelect;
 
 	HRESULT hrOle;
@@ -315,7 +316,7 @@ public:
 	friend class DataObject;
 	friend class DropTarget;
 	bool DragIsRectangularOK(CLIPFORMAT fmt) const {
-		return drag.rectangular && (fmt == cfColumnSelect);
+		return drag.rectangular && ((fmt == cfColumnSelect) || (fmt == cfColumnSelectBorland));
 	}
 
 private:
@@ -347,9 +348,11 @@ ScintillaWin::ScintillaWin(HWND hwnd) {
 	hasOKText = false;
 
 	// There does not seem to be a real standard for indicating that the clipboard
-	// contains a rectangular selection, so copy Developer Studio.
+	// contains a rectangular selection, so copy Developer Studio and Borland Delphi.
 	cfColumnSelect = static_cast<CLIPFORMAT>(
 		::RegisterClipboardFormat(TEXT("MSDEVColumnSelect")));
+	cfColumnSelectBorland = static_cast<CLIPFORMAT>(
+		::RegisterClipboardFormat(TEXT("Borland IDE Block Type")));
 
 	// Likewise for line-copy (copies a full line when no text is selected)
 	cfLineSelect = static_cast<CLIPFORMAT>(
@@ -623,7 +626,11 @@ LRESULT ScintillaWin::WndPaint(uptr_t wParam) {
 		::EndPaint(MainHWND(), pps);
 	if (paintState == paintAbandoned) {
 		// Painting area was insufficient to cover new styling or brace highlight positions
-		FullPaint();
+		if (IsOcxCtrl) {
+			FullPaintDC(pps->hdc);
+		} else {
+			FullPaint();
+		}
 	}
 	paintState = notPainting;
 
@@ -1697,7 +1704,7 @@ void ScintillaWin::Paste() {
 	SelectionPosition selStart = sel.IsRectangular() ?
 		sel.Rectangular().Start() :
 		sel.Range(sel.Main()).Start();
-	bool isRectangular = ::IsClipboardFormatAvailable(cfColumnSelect) != 0;
+	bool isRectangular = ((::IsClipboardFormatAvailable(cfColumnSelect) != 0) || (::IsClipboardFormatAvailable(cfColumnSelectBorland) != 0));
 
 	// Always use CF_UNICODETEXT if available
 	GlobalMemory memUSelection(::GetClipboardData(CF_UNICODETEXT));
@@ -2132,7 +2139,7 @@ void ScintillaWin::ImeStartComposition() {
 			lf.lfItalic = static_cast<BYTE>(vs.styles[styleHere].italic ? 1 : 0);
 			lf.lfCharSet = DEFAULT_CHARSET;
 			lf.lfFaceName[0] = '\0';
-			if (vs.styles[styleHere].fontName)
+			if (vs.styles[styleHere].fontName && (strlen(vs.styles[styleHere].fontName) < sizeof(lf.lfFaceName)))
 				strcpy(lf.lfFaceName, vs.styles[styleHere].fontName);
 
 			::ImmSetCompositionFontA(hIMC, &lf);
@@ -2244,6 +2251,12 @@ void ScintillaWin::CopyToClipboard(const SelectionText &selectedText) {
 
 	if (selectedText.rectangular) {
 		::SetClipboardData(cfColumnSelect, 0);
+		GlobalMemory borlandColumn;
+		borlandColumn.Allocate(1);
+		if (borlandColumn) {
+			static_cast<BYTE *>(borlandColumn.ptr)[0] = 0x02;
+			borlandColumn.SetClip(cfColumnSelectBorland);
+		}
 	}
 
 	if (selectedText.lineCopy) {

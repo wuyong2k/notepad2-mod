@@ -231,6 +231,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 
 	LineLayoutCache llc;
 	PositionCache posCache;
+	SpecialRepresentations reprs;
 
 	KeyMap kmap;
 
@@ -332,6 +333,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	void InvalidateStyleData();
 	void InvalidateStyleRedraw();
 	void RefreshStyleData();
+	void SetRepresentations();
 	void DropGraphics(bool freeObjects);
 	void AllocateGraphics();
 
@@ -523,7 +525,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 
 	void ContainerNeedsUpdate(int flags);
 	void PageMove(int direction, Selection::selTypes sel=Selection::noSel, bool stuttered = false);
-	enum { cmSame, cmUpper, cmLower } caseMap;
+	enum { cmSame, cmUpper, cmLower };
 	virtual std::string CaseMapString(const std::string &s, int caseMapping);
 	void ChangeCaseOfSelection(int caseMapping);
 	void LineTranspose();
